@@ -24,7 +24,7 @@
     "indexes": "firestore.indexes.json"
   },
   "functions": {
-    "predeploy": [
-    ]
+    "predeploy": [],
+    "source": "functions"
   }
 }
