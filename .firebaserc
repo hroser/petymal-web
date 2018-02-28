@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "petymal": "petymal-app",
+    "default": "petymal-app"
+  }
+}
