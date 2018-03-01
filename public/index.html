@@ -122,16 +122,16 @@
     <!-- Navigation Bar -->
     <div class="fp-tab mdl-layout__header-row mdl-cell--hide-phone mdl-color--light-blue-600">
       <div class="mdl-tab">
-        <a href="/" id="fp-menu-home" class="mdl-layout__tab fp-signed-in-only is-active mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">home</i> Home</a>
+        <a href="/" id="fp-menu-home" class="mdl-layout__tab fp-signed-in-only is-active mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">home</i> My Animals</a>
         <a href="/feed" id="fp-menu-feed" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">trending_up</i> Feed</a>
         <input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
-        <button class="fp-signed-in-only mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-color--amber-400 mdl-shadow--4dp mdl-js-ripple-effect" id="add">
-          <i class="material-icons">file_upload</i>
+		<button class="fp-signed-in-only mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-color--amber-400 mdl-shadow--4dp mdl-js-ripple-effect" id="add">
+          <i class="material-icons">add</i>
         </button>
       </div>
     </div>
     <button class="fp-signed-in-only mdl-cell--hide-desktop mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-color--amber-400 mdl-shadow--4dp" id="add-floating">
-      <i class="material-icons">photo_camera</i>
+      <i class="material-icons">add</i>
     </button>
   </header>
 
@@ -145,7 +145,7 @@
       </a>
     </div>
     <nav class="mdl-navigation">
-      <a class="mdl-navigation__link is-active fp-signed-in-only" href="/"><i class="material-icons">home</i> Home</a>
+      <a class="mdl-navigation__link is-active fp-signed-in-only" href="/"><i class="material-icons">home</i> My Animals</a>
       <a class="mdl-navigation__link" href="/feed"><i class="material-icons">trending_up</i> Feed</a>
       <hr />
       <a class="mdl-navigation__link" href="/about"><i class="material-icons">perm_contact_calendar</i> About - Help - Contact</a>
@@ -199,8 +199,8 @@
         <div class="mdl-card__supporting-text mdl-color-text--grey-600">
           <i class="fp-info material-icons">info</i>
           <div>
-            <p>FriendlyPix is a  photo sharing app showcasing the use of the <a href="https://firebase.google.com">Firebase Platform</a>.</p>
-            <p>This application is meant as a sample application for developers, avoid posting private or personal data.</p>
+            <p>Petymal helps you to keep track of your pets and animals and to connect them with their ancestors and descendants.</p>
+            <p></p>
           </div>
         </div>
       </div>
@@ -209,14 +209,9 @@
         <div class="mdl-card__supporting-text mdl-color-text--grey-600">
           <i class="fp-info material-icons">help</i>
           <div>
-            <p>Start following people to see their posts in your <a href="/"><i class="material-icons">home</i>home</a>!</p>
+            <p>Start creating your animal profiles and connect them in your <a href="/"><i class="material-icons">home</i>My Animals</a> page!</p>
             <p>
-              Use the <strong><i class="material-icons">search</i>search bar</strong> to find people you know and have
-              a look at the <a href="/feed"><i class="material-icons">trending_up</i>feed</a> to discover interesting people.
-            </p>
-            <p>Then <i class="material-icons">favorite</i>like and comment their posts!</p>
-            <p>
-              Share your pics with your friends using the <i class="material-icons">file_upload</i>or <i class="material-icons">photo_camera</i>buttons.
+              You can search people and animals you know and have a look at the <a href="/feed">Feed</a> to discover interesting people.
             </p>
           </div>
         </div>
@@ -226,9 +221,8 @@
         <div class="mdl-card__supporting-text mdl-color-text--grey-600">
           <i class="fp-info material-icons">contacts</i>
           <div>
-            <p>For removal and take down requests - only - send an email to <code>friendlypix-team@google.com</code>.</p>
-
-            <p>For other requests and questions you can file an issue on the <a href="https://github.com/firebase/friendlypix-web"><code>firebase/friendlypix-web</code></a> GitHub repo.</p>
+            <p>For requests and questions please send an email to:</p>
+            <p><code>info@petymal.com</code></p>
           </div>
         </div>
       </div>
