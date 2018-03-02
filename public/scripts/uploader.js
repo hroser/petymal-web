@@ -58,6 +58,7 @@ friendlyPix.Uploader = class {
       // DOM Elements
       this.addButton = $('#add');
       this.addButtonFloating = $('#add-floating');
+	  this.addImageButton = $('#addImageButton');
       this.imageInput = $('#fp-mediacapture');
       this.overlay = $('.fp-overlay', '#page-add');
       this.newPictureContainer = $('#newPictureContainer');
@@ -67,8 +68,9 @@ friendlyPix.Uploader = class {
       this.toast = $('.mdl-js-snackbar');
 
       // Event bindings
-      this.addButton.click(() => this.initiatePictureCapture());
-      this.addButtonFloating.click(() => this.initiatePictureCapture());
+      this.addButton.click(() => this.initiateAddPage());
+      this.addButtonFloating.click(() => this.initiateAddPage());
+	  this.addImageButton.click(() => this.initiatePictureCapture());
       this.imageInput.change(e => this.readPicture(e));
       this.uploadPicForm.submit(e => this.uploadPic(e));
       this.imageCaptionInput.keyup(() => this.uploadButton.prop('disabled', !this.imageCaptionInput.val()));
@@ -88,7 +90,6 @@ friendlyPix.Uploader = class {
           for (var i = 0; i < len; i++) {
             arr[i] = binStr.charCodeAt(i);
           }
-
           callback(new Blob([arr], {type: type || 'image/png'}));
         }
       });
@@ -99,7 +100,18 @@ friendlyPix.Uploader = class {
    * Start taking a picture.
    */
   initiatePictureCapture() {
-    this.imageInput.trigger('click');
+	this.imageInput.trigger('click');
+  }
+  
+   /**
+   * show new post page
+   */
+  initiateAddPage() {
+	this.newPictureContainer.attr('src', '');
+	page('/add');
+	this.imageCaptionInput.focus();
+    this.uploadButton.prop('disabled', true);
+    this.disableUploadUi(false);
   }
 
   /**
@@ -109,7 +121,7 @@ friendlyPix.Uploader = class {
     this.newPictureContainer.attr('src', url);
     page('/add');
     this.imageCaptionInput.focus();
-    this.uploadButton.prop('disabled', true);
+    //this.uploadButton.prop('disabled', true);
   }
 
   /**
@@ -127,7 +139,7 @@ friendlyPix.Uploader = class {
    * Reads the picture the has been selected by the file picker.
    */
   readPicture(event) {
-    this.clear();
+    //this.clear();
 
     var file = event.target.files[0]; // FileList object
     this.currentFile = file;

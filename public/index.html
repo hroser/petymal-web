@@ -122,9 +122,9 @@
     <!-- Navigation Bar -->
     <div class="fp-tab mdl-layout__header-row mdl-cell--hide-phone mdl-color--light-blue-600">
       <div class="mdl-tab">
-        <a href="/" id="fp-menu-home" class="mdl-layout__tab fp-signed-in-only is-active mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">home</i> My Animals</a>
-        <a href="/feed" id="fp-menu-feed" class="mdl-layout__tab mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">trending_up</i> Feed</a>
-        <input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
+        <a href="/" id="fp-menu-feed" class="mdl-layout__tab fp-signed-in-only is-active mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">home</i> Feed</a>
+        <a href="/animals" id="fp-menu-animals" class="mdl-layout__tab fp-signed-in-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">star</i> My Animals</a>
+        <a href="/posts" id="fp-menu-posts" class="mdl-layout__tab fp-signed-in-only mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">whatshot</i> My Posts</a>
 		<button class="fp-signed-in-only mdl-button mdl-js-button mdl-button--fab mdl-cell--hide-tablet mdl-color--amber-400 mdl-shadow--4dp mdl-js-ripple-effect" id="add">
           <i class="material-icons">add</i>
         </button>
@@ -145,8 +145,9 @@
       </a>
     </div>
     <nav class="mdl-navigation">
-      <a class="mdl-navigation__link is-active fp-signed-in-only" href="/"><i class="material-icons">home</i> My Animals</a>
-      <a class="mdl-navigation__link" href="/feed"><i class="material-icons">trending_up</i> Feed</a>
+      <a class="mdl-navigation__link is-active fp-signed-in-only" href="/"><i class="material-icons">home</i> Feed</a>
+	  <a class="mdl-navigation__link is-active fp-signed-in-only" href="/animals"><i class="material-icons">star</i> My Animals</a>
+	  <a class="mdl-navigation__link is-active fp-signed-in-only" href="/posts"><i class="material-icons">whatshot</i> My Posts</a>
       <hr />
       <a class="mdl-navigation__link" href="/about"><i class="material-icons">perm_contact_calendar</i> About - Help - Contact</a>
       <hr class="fp-signed-in-only"/>
@@ -180,6 +181,32 @@
            </div>
         </div>
       </div>
+      <div class="fp-next-page-button">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--fab">
+          <i class="material-icons">expand_more</i>
+        </button>
+      </div>
+    </section>
+	
+	<!-- Show a list of animals -->
+    <section id="page-animals" class="mdl-grid fp-content" style="display: none;">
+      <div class="fp-new-posts-button">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
+          Show new posts...
+        </button>
+      </div>
+      <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
+        <div class="fp-no-posts fp-help mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet
+                    mdl-cell--8-col-desktop mdl-grid mdl-grid--no-spacing">
+           <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+             <i class="fp-info material-icons">help</i>
+             <div>
+               <p>Your animals</p>
+               </div>
+           </div>
+        </div>
+      </div>
+	  Your animals
       <div class="fp-next-page-button">
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--fab">
           <i class="material-icons">expand_more</i>
@@ -289,6 +316,10 @@
               <button type="submit" class="fp-upload mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
                 Upload this pic!
               </button>
+			  <button type="button" id="addImageButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
+                Add image
+              </button>
+			  <br><input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
             </form>
           </div>
         </div>
@@ -337,7 +368,8 @@
     'signInFlow': signInFlow,
     'signInOptions': [
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+	  firebase.auth.EmailAuthProvider.PROVIDER_ID
     ]
   };
   var firebaseUi = new firebaseui.auth.AuthUI(firebase.auth());

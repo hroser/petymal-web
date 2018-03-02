@@ -44,12 +44,13 @@ friendlyPix.Router = class {
         const loadUser = userId => friendlyPix.userPage.loadUser(userId);
         const showHomeFeed = () => friendlyPix.feed.showHomeFeed();
         const showGeneralFeed = () => friendlyPix.feed.showGeneralFeed();
+		const showUserAnimals = () => friendlyPix.feed.showUserAnimals();
         const clearFeed = () => friendlyPix.feed.clear();
         const showPost = postId => friendlyPix.post.loadPost(postId);
 
-        page('/', pipe(showHomeFeed, null, true),
-            pipe(displayPage, {pageId: 'feed', onlyAuthed: true}));
-        page('/feed', pipe(showGeneralFeed, null, true), pipe(displayPage, {pageId: 'feed'}));
+        page('/', pipe(showGeneralFeed, null, true), pipe(displayPage, {pageId: 'feed', onlyAuthed: true}));
+		page('/animals', pipe(showUserAnimals, null, true), pipe(displayPage, {pageId: 'animals', onlyAuthed: true}));
+		page('/posts', pipe(showHomeFeed, null, true), pipe(displayPage, {pageId: 'feed', onlyAuthed: true}));
         page('/post/:postId', pipe(showPost, null, true), pipe(displayPage, {pageId: 'post'}));
         page('/user/:userId', pipe(loadUser, null, true), pipe(displayPage, {pageId: 'user-info'}));
         page('/about', pipe(clearFeed, null, true), pipe(displayPage, {pageId: 'about'}));

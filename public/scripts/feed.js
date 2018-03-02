@@ -148,6 +148,7 @@ friendlyPix.Feed = class {
     this.clear();
 
     if (this.auth.currentUser) {
+	  console.log("auth user home feed ok")
       // Make sure the home feed is updated with followed users's new posts.
       friendlyPix.firebase.updateHomeFeeds().then(() => {
         // Load initial batch of posts.
@@ -174,6 +175,18 @@ friendlyPix.Feed = class {
         // Listen for posts deletions.
         friendlyPix.firebase.registerForPostsDeletion(postId => this.onPostDeleted(postId));
       });
+    }
+  }
+  
+  /**
+   * Shows the users animals
+   */
+  showUserAnimals() {
+    // Clear previously displayed posts if any.
+    this.clear();
+
+    if (this.auth.currentUser) {
+      
     }
   }
 
