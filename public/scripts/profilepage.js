@@ -20,7 +20,7 @@ window.friendlyPix = window.friendlyPix || {};
 /**
  * Handles the User Profile UI.
  */
-friendlyPix.UserPage = class {
+friendlyPix.ProfilePage = class {
 
   /**
    * Initializes the user's profile UI.
@@ -33,23 +33,23 @@ friendlyPix.UserPage = class {
 
     $(document).ready(() => {
       // DOM Elements.
-      this.userPage = $('#page-user-info');
+      this.profilePage = $('#page-profile');
       this.userAvatar = $('.fp-user-avatar');
       this.toast = $('.mdl-js-snackbar');
       this.userUsername = $('.fp-user-username');
       this.userInfoContainer = $('.fp-user-container');
       this.followContainer = $('.fp-follow');
-      this.noPosts = $('.fp-no-posts', this.userPage);
+      this.noPosts = $('.fp-no-posts', this.profilePage);
       this.followLabel = $('.mdl-switch__label', this.followContainer);
       this.followCheckbox = $('#follow');
-      this.nbPostsContainer = $('.fp-user-nbposts', this.userPage);
-      this.nbFollowers = $('.fp-user-nbfollowers', this.userPage);
-      this.nbFollowing = $('.fp-user-nbfollowing', this.userPage);
-      this.nbFollowingContainer = $('.fp-user-nbfollowing-container', this.userPage);
-      this.followingContainer = $('.fp-user-following', this.userPage);
+      this.nbPostsContainer = $('.fp-user-nbposts', this.profilePage);
+      this.nbFollowers = $('.fp-user-nbfollowers', this.profilePage);
+      this.nbFollowing = $('.fp-user-nbfollowing', this.profilePage);
+      this.nbFollowingContainer = $('.fp-user-nbfollowing-container', this.profilePage);
+      this.followingContainer = $('.fp-user-following', this.profilePage);
       this.nextPageButton = $('.fp-next-page-button button');
-      this.closeFollowingButton = $('.fp-close-following', this.userPage);
-      this.userInfoPageImageContainer = $('.fp-image-container', this.userPage);
+      this.closeFollowingButton = $('.fp-close-following', this.profilePage);
+      this.userInfoPageImageContainer = $('.fp-image-container', this.profilePage);
 
       // Event bindings.
       this.followCheckbox.change(() => this.onFollowChange());
@@ -69,7 +69,7 @@ friendlyPix.UserPage = class {
     const checked = this.followCheckbox.prop('checked');
     this.followCheckbox.prop('disabled', true);
 
-    friendlyPix.firebase.toggleFollowUser(this.userId, checked);
+    friendlyPix.firebase.toggleFollowUser(this.profileId, checked);
   }
 
   /**
@@ -77,7 +77,7 @@ friendlyPix.UserPage = class {
    */
   trackFollowStatus() {
     if (this.auth.currentUser) {
-      friendlyPix.firebase.registerToFollowStatusUpdate(this.userId, data => {
+      friendlyPix.firebase.registerToFollowStatusUpdate(this.profileId, data => {
         this.followCheckbox.prop('checked', data.val() !== null);
         this.followCheckbox.prop('disabled', false);
         this.followLabel.text(data.val() ? 'Following' : 'Follow');
@@ -93,7 +93,7 @@ friendlyPix.UserPage = class {
     const postIds = Object.keys(posts);
     for (let i = postIds.length - 1; i >= 0; i--) {
       this.userInfoPageImageContainer.append(
-          friendlyPix.UserPage.createImageCard(postIds[i],
+          friendlyPix.ProfilePage.createImageCard(postIds[i],
               posts[postIds[i]].thumb_url || posts[postIds[i]].url, posts[postIds[i]].text));
       this.noPosts.hide();
     }
@@ -123,15 +123,15 @@ friendlyPix.UserPage = class {
   /**
    * Displays the given user information in the UI.
    */
-  loadUser(userId) {
-    this.userId = userId;
+  loadProfile(profileId) {
+    this.profileId = profileId;
 
     // Reset the UI.
     this.clear();
 
     // If users is the currently signed-in user we hide the "Follow" checkbox and the opposite for
     // the "Notifications" checkbox.
-    if (this.auth.currentUser && userId === this.auth.currentUser.uid) {
+    if (this.auth.currentUser && profileId === this.auth.currentUser.uid) {
       this.followContainer.hide();
       friendlyPix.messaging.enableNotificationsContainer.show();
       friendlyPix.messaging.enableNotificationsCheckbox.prop('disabled', true);
@@ -147,7 +147,7 @@ friendlyPix.UserPage = class {
     }
 
     // Load user's profile.
-    friendlyPix.firebase.loadUserProfile(userId).then(snapshot => {
+    friendlyPix.firebase.loadUserProfile(profileId).then(snapshot => {
       const userInfo = snapshot.val();
       if (userInfo) {
         this.userAvatar.css('background-image',
@@ -165,27 +165,27 @@ friendlyPix.UserPage = class {
     });
 
     // Lod user's number of followers.
-    friendlyPix.firebase.registerForFollowersCount(userId,
+    friendlyPix.firebase.registerForFollowersCount(profileId,
         nbFollowers => this.nbFollowers.text(nbFollowers));
 
     // Lod user's number of followed users.
-    friendlyPix.firebase.registerForFollowingCount(userId,
+    friendlyPix.firebase.registerForFollowingCount(profileId,
         nbFollowed => this.nbFollowing.text(nbFollowed));
 
     // Lod user's number of posts.
-    friendlyPix.firebase.registerForPostsCount(userId,
+    friendlyPix.firebase.registerForPostsCount(profileId,
         nbPosts => this.nbPostsContainer.text(nbPosts));
 
     // Display user's posts.
-    friendlyPix.firebase.getUserFeedPosts(userId).then(data => {
+    friendlyPix.firebase.getUserFeedPosts(profileId).then(data => {
       const postIds = Object.keys(data.entries);
       if (postIds.length === 0) {
         this.noPosts.show();
       }
-      friendlyPix.firebase.subscribeToUserFeed(userId,
+      friendlyPix.firebase.subscribeToUserFeed(profileId,
         (postId, postValue) => {
           this.userInfoPageImageContainer.prepend(
-              friendlyPix.UserPage.createImageCard(postId,
+              friendlyPix.ProfilePage.createImageCard(postId,
                   postValue.thumb_url || postValue.url, postValue.text));
           this.noPosts.hide();
         }, postIds[postIds.length - 1]);
@@ -197,19 +197,19 @@ friendlyPix.UserPage = class {
 
     // Listen for posts deletions.
     friendlyPix.firebase.registerForPostsDeletion(postId =>
-        $(`.fp-post-${postId}`, this.userPage).remove());
+        $(`.fp-post-${postId}`, this.profilePage).remove());
   }
 
   /**
    * Displays the list of followed people.
    */
   displayFollowing() {
-    friendlyPix.firebase.getFollowingProfiles(this.userId).then(profiles => {
+    friendlyPix.firebase.getFollowingProfiles(this.profileId).then(profiles => {
       // Clear previous following list.
       $('.fp-usernamelink', this.followingContainer).remove();
       // Display all following profile cards.
       Object.keys(profiles).forEach(uid => this.followingContainer.prepend(
-          friendlyPix.UserPage.createProfileCardHtml(
+          friendlyPix.ProfilePage.createProfileCardHtml(
               uid, profiles[uid].profile_picture, profiles[uid].full_name)));
       if (Object.keys(profiles).length > 0) {
         this.followingContainer.show();
@@ -287,4 +287,4 @@ friendlyPix.UserPage = class {
   }
 };
 
-friendlyPix.userPage = new friendlyPix.UserPage();
+friendlyPix.profilePage = new friendlyPix.ProfilePage();

@@ -107,6 +107,10 @@ friendlyPix.Uploader = class {
    * show new post page
    */
   initiateAddPage() {
+	// clear text and image fields
+	this.clear();
+	
+	// show add post page
 	this.newPictureContainer.attr('src', '');
 	page('/add');
 	this.imageCaptionInput.focus();

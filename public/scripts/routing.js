@@ -41,7 +41,7 @@ friendlyPix.Router = class {
         // Configuring routes.
         const pipe = friendlyPix.Router.pipe;
         const displayPage = this.displayPage.bind(this);
-        const loadUser = userId => friendlyPix.userPage.loadUser(userId);
+        const loadProfile = profileId => friendlyPix.profilePage.loadProfile(profileId);
         const showHomeFeed = () => friendlyPix.feed.showHomeFeed();
         const showGeneralFeed = () => friendlyPix.feed.showGeneralFeed();
 		const showUserAnimals = () => friendlyPix.feed.showUserAnimals();
@@ -52,7 +52,7 @@ friendlyPix.Router = class {
 		page('/animals', pipe(showUserAnimals, null, true), pipe(displayPage, {pageId: 'animals', onlyAuthed: true}));
 		page('/posts', pipe(showHomeFeed, null, true), pipe(displayPage, {pageId: 'feed', onlyAuthed: true}));
         page('/post/:postId', pipe(showPost, null, true), pipe(displayPage, {pageId: 'post'}));
-        page('/user/:userId', pipe(loadUser, null, true), pipe(displayPage, {pageId: 'user-info'}));
+        page('/user/:profileId', pipe(loadProfile, null, true), pipe(displayPage, {pageId: 'profile'}));
         page('/about', pipe(clearFeed, null, true), pipe(displayPage, {pageId: 'about'}));
         page('/add', pipe(displayPage, {pageId: 'add', onlyAuthed: true}));
         page('*', () => page('/'));

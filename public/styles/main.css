@@ -340,34 +340,34 @@ a {
   flex-direction: column;
   text-align: left;
 }
-#page-user-info .fp-image .likes {
+#page-profile .fp-image .likes {
   margin-left: 3px;
   margin-right: 20px;
 }
-#page-user-info .fp-image .comments {
+#page-profile .fp-image .comments {
   margin-left: 3px;
 }
-#page-user-info .fp-user-detail-container {
+#page-profile .fp-user-detail-container {
   display: flex;
   margin-top: 15px;
 }
-#page-user-info .fp-user-detail {
+#page-profile .fp-user-detail {
   margin-right: 15px;
   white-space: nowrap;
   opacity: 0.6;
 }
-#page-user-info .fp-user-nbposts,
-#page-user-info .fp-user-nbfollowers,
-#page-user-info .fp-user-nbfollowing {
+#page-profile .fp-user-nbposts,
+#page-profile .fp-user-nbfollowers,
+#page-profile .fp-user-nbfollowing {
   font-weight: bold;
 }
-#page-user-info .fp-user-detail.is-active {
+#page-profile .fp-user-detail.is-active {
   border-bottom: 2px #FFCA28 solid;
   padding: 5px 5px 3px 5px;
   margin: -5px 10px -5px -5px;
   opacity: 1;
 }
-#page-user-info .fp-no-posts .mdl-card {
+#page-profile .fp-no-posts .mdl-card {
   display: flex;
   height: 100%;
   width: 100%;
@@ -375,7 +375,7 @@ a {
   align-items: center;
   color: #555;
 }
-#page-user-info .fp-user-nbfollowing-container:HOVER {
+#page-profile .fp-user-nbfollowing-container:HOVER {
   cursor: pointer;
   background-color: #eaeaea;
   border-radius: 5px;
@@ -383,7 +383,7 @@ a {
   margin: -5px 10px -5px -5px;
   border-bottom: none;
 }
-#page-user-info .fp-user-nbfollowing-container.is-active:HOVER {
+#page-profile .fp-user-nbfollowing-container.is-active:HOVER {
   border-bottom: 2px #FFCA28 solid;
   padding: 5px 5px 3px 5px;
   margin: -5px 10px -5px -5px;
@@ -424,25 +424,25 @@ a {
   .fp-follow, .fp-notifications {
     margin-top: 10px;
   }
-  #page-user-info .fp-user-detail-container {
+  #page-profile .fp-user-detail-container {
     margin-top: 10px;
   }
-  #page-user-info .fp-user-detail {
+  #page-profile .fp-user-detail {
     font-size: 13px;
   }
 }
 
 /* User Info photo cards */
 
-#page-user-info .fp-image {
+#page-profile .fp-image {
   position: relative;
   cursor: pointer;
 }
-#page-user-info .fp-image img {
+#page-profile .fp-image img {
   height: 100%;
   width: 100%;
 }
-#page-user-info .fp-overlay,
+#page-profile .fp-overlay,
 #page-add .fp-overlay {
   opacity: 0;
   background-color: black;
@@ -455,10 +455,10 @@ a {
   align-items: center;
   color: white;
 }
-#page-user-info .fp-overlay:HOVER {
+#page-profile .fp-overlay:HOVER {
   opacity: 0.6;
 }
-#page-user-info .fp-image .mdl-card {
+#page-profile .fp-image .mdl-card {
   max-height: 150px;
   background-size: cover;
   background-position: 50% 50%;
@@ -483,7 +483,7 @@ a {
   font-weight: 500;
 }
 @media screen and (max-width: 840px) {
-  #page-user-info .fp-overlay {
+  #page-profile .fp-overlay {
     background-color: white;
     color: #666;
     opacity: 0.8;
