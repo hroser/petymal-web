@@ -420,13 +420,13 @@ friendlyPix.Firebase = class {
    /**
    * Adds a profile link to a post.
    */
-  addProfileLink(postId, linkedProfiles) {
+  addProfileLink(postId, linkedProfiles, linkedProfileIds) {
 	var profileLinkObject;
 	var promiseList = [];
 	linkedProfiles.forEach(linkedProfile => {
 	profileLinkObject = {
-      profile_id: linkedProfile,
-	  display_name: linkedProfile,
+      profile_id: linkedProfile.profile_id,
+	  display_name: linkedProfile.display_name,
       timestamp: Date.now()
     };
 	promiseList.push(this.database.ref(`postsLinkedProfiles/${postId}`).push(profileLinkObject).then(() => {console.log(linkedProfile + " added");}));

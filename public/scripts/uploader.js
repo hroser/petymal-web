@@ -42,12 +42,16 @@ friendlyPix.Uploader = class {
     };
   }
 
+
   /**
    * Inititializes the pics uploader/post creator.
    * @constructor
    */
   constructor() {
 	this.linkedProfiles = [];
+		
+	this.availableProfiles = [];
+    this.availableProfileIDs = [];
 	  
     // Firebase SDK
     this.database = firebase.database();
@@ -121,34 +125,7 @@ friendlyPix.Uploader = class {
     this.uploadButton.prop('disabled', true);
     this.disableUploadUi(false);
 	
-	var availableProfiles = [
-      "ActionScript",
-      "AppleScript",
-      "Asp",
-      "BASIC",
-      "C",
-      "C++",
-      "Clojure",
-      "COBOL",
-      "ColdFusion",
-      "Erlang",
-      "Fortran",
-      "Groovy",
-      "Haskell",
-      "Java",
-      "JavaScript",
-      "Lisp",
-      "Perl",
-      "PHP",
-      "Python",
-      "Ruby",
-      "Scala",
-      "Scheme"
-    ];
-	
-	availableProfiles = [];
-	
-	
+
 	// TODO, clean .. !!
 	
 	
@@ -165,13 +142,14 @@ friendlyPix.Uploader = class {
 	for (var key in data) {
     console.log(key);
 	console.log(data[key]["full_name"]);
-	availableProfiles.push(data[key]["full_name"]);
-	console.log(availableProfiles);
+	this.availableProfiles.push(data[key]["full_name"]);
+	this.availableProfileIDs.push(key);
+	console.log(this.availableProfiles);
 	}
 
 	})
 	
-	this.initLinkProfilesInputAutocomplete(linkProfilesInput, availableProfiles, this);
+	this.initLinkProfilesInputAutocomplete(linkProfilesInput, this.availableProfiles, this);
   }
 
 
@@ -341,10 +319,12 @@ friendlyPix.Uploader = class {
   /**
    * If a linked profile is seleted add it above the text field
    */
-  addLinkedProfile(profileId) {
+  addLinkedProfile(profileFullName) {
 	  // create list of linked profiles
-	  linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + profileId;
-	  this.linkedProfiles.push(profileId);
+	  linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + profileFullName;
+	  var linkedProfileObject = {display_name: profileFullName, profile_id: this.availableProfileIDs[this.availableProfiles.indexOf(profileFullName)] };
+	  this.linkedProfiles.push(linkedProfileObject);
+	  console.log(linkedProfileObject);
 	  console.log(this.linkedProfiles);
   }
   
