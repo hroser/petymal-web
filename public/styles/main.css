@@ -220,6 +220,10 @@ a {
   transform: scale(0.0001);
   opacity: 0;
 }
+#fp-newAnimalMediacapture {
+  transform: scale(0.0001);
+  opacity: 0;
+}
 
 /* Drawer */
 

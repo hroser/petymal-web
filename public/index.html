@@ -195,6 +195,9 @@
           Show new posts...
         </button>
       </div>
+	  <button type="button" id="addNewAnimalButton" onclick="window.location.href='/new-animal'" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
+                Add new animal
+      </button>
       <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
         <div class="fp-no-posts fp-help mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet
                     mdl-cell--8-col-desktop mdl-grid mdl-grid--no-spacing">
@@ -255,7 +258,7 @@
       </div>
     </section>
 
-    <!-- User Profile page -->
+    <!-- Profile page -->
     <section id="page-profile" class="mdl-grid fp-content" style="display: none;">
       <div class="fp-user-container mdl-shadow--2dp mdl-cell mdl-cell--12-col">
         <div class="fp-user-avatar"></div>
@@ -298,7 +301,7 @@
       </div>
     </section>
 
-    <!-- Post new pic page -->
+    <!-- New Post page -->
     <section id="page-add" class="mdl-grid fp-content" style="display: none;">
       <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid mdl-grid--no-spacing">
         <div class="fp-addcontainer mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
@@ -326,6 +329,40 @@
                 Send
               </button>
 			  <br><input id="fp-mediacapture" type="file" accept="image/*;capture=camera">
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+	
+	
+	<!-- New animal page -->
+    <section id="page-new-animal" class="mdl-grid fp-content" style="display: none;">
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid mdl-grid--no-spacing">
+        <div class="fp-addcontainer mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+          <div class="fp-overlay">
+            <i class="material-icons">hourglass_full</i>
+          </div><br>
+		  <div class="fp-title-post">Add a new animal:</div><br>
+          <img id="newAnimalPictureContainer" src="">
+          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+            <form id="newAnimalForm" autocomplete="off" action="#">
+			  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="newAnimalName">
+                <label class="mdl-textfield__label" for="newAnimalName">Name</label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="newAnimalSpecies">
+                <label class="mdl-textfield__label" for="newAnimalSpecies">Species</label>
+              </div>
+              <br />
+			  <button type="button" id="newAnimalImageButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
+                Add image
+              </button>
+			  <button type="submit" class="fp-upload mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
+                Save
+              </button>
+			  <br><input id="fp-newAnimalMediacapture" type="file" accept="image/*;capture=camera">
             </form>
           </div>
         </div>
