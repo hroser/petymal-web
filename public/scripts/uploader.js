@@ -47,6 +47,8 @@ friendlyPix.Uploader = class {
    * @constructor
    */
   constructor() {
+	this.linkedProfiles = [];
+	  
     // Firebase SDK
     this.database = firebase.database();
     this.auth = firebase.auth();
@@ -157,7 +159,8 @@ friendlyPix.Uploader = class {
 	
 	//friendlyPix.firebase.getFollowingProfiles().then(full_name => { })
 	
-	friendlyPix.firebase.getFollowingProfiles('fpIh4fz1bwhFEpz1aat3t1UKCWk2').then(data => { 
+	//friendlyPix.firebase.getFollowingProfiles('fpIh4fz1bwhFEpz1aat3t1UKCWk2').then(data => { 
+	friendlyPix.firebase.getFollowingProfiles(this.auth.currentUser.uid).then(data => { 
 	console.log(data);
 	for (var key in data) {
     console.log(key);
@@ -288,7 +291,7 @@ friendlyPix.Uploader = class {
 
     this.generateImages().then(pics => {
       // Upload the File upload to Cloud Storage and create new post.
-      friendlyPix.firebase.uploadNewPic(pics.full, pics.thumb, this.currentFile.name, imageCaption)
+      friendlyPix.firebase.uploadNewPic(pics.full, pics.thumb, this.currentFile.name, imageCaption, this.linkedProfiles)
           .then(postId => {
             page(`/user/${this.auth.currentUser.uid}`);
             var data = {
@@ -329,6 +332,7 @@ friendlyPix.Uploader = class {
 
 	// clear linked profiles list
 	linkedProfilesList.innerHTML = "";
+	this.linkedProfiles = [];
 	
     // Make sure UI is not disabled.
     this.disableUploadUi(false);
@@ -340,6 +344,8 @@ friendlyPix.Uploader = class {
   addLinkedProfile(profileId) {
 	  // create list of linked profiles
 	  linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + profileId;
+	  this.linkedProfiles.push(profileId);
+	  console.log(this.linkedProfiles);
   }
   
   

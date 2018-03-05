@@ -416,12 +416,31 @@ friendlyPix.Firebase = class {
     };
     return this.database.ref(`comments/${postId}`).push(commentObject);
   }
+  
+   /**
+   * Adds a profile link to a post.
+   */
+  addProfileLink(postId, linkedProfiles) {
+	var profileLinkObject;
+	var promiseList = [];
+	linkedProfiles.forEach(linkedProfile => {
+	profileLinkObject = {
+      profile_id: linkedProfile,
+	  display_name: linkedProfile,
+      timestamp: Date.now()
+    };
+	promiseList.push(this.database.ref(`postsLinkedProfiles/${postId}`).push(profileLinkObject).then(() => {console.log(linkedProfile + " added");}));
+	});
+
+    //return this.database.ref(`postsLinkedProfiles/${postId}`).push(profileLinkObject).then(() => {console.log(displayName + " added");});
+	return Promise.all(promiseList).then(() => {console.log("Promise ok");});
+  }
 
   /**
    * Uploads a new Picture to Cloud Storage and adds a new post referencing it.
    * This returns a Promise which completes with the new Post ID.
    */
-  uploadNewPic(pic, thumb, fileName, text) {
+  uploadNewPic(pic, thumb, fileName, text, linkedProfiles) {
     // Get a reference to where the post will be created.
     const newPostKey = this.database.ref('/posts').push().key;
 
@@ -449,8 +468,11 @@ friendlyPix.Firebase = class {
     }).catch(error => {
       console.error('Error while uploading new thumb', error);
     });
+	
+	// add profile links
+    var addProfileLinksTask = this.addProfileLink(newPostKey, linkedProfiles);
 
-    return Promise.all([picUploadTask, tumbUploadTask]).then(urls => {
+    return Promise.all([picUploadTask, tumbUploadTask, addProfileLinksTask]).then(urls => {
       // Once both pics and thumbnails has been uploaded add a new post in the Firebase Database and
       // to its fanned out posts lists (user's posts and home post).
       const update = {};
