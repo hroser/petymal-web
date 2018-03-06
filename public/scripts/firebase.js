@@ -429,7 +429,7 @@ friendlyPix.Firebase = class {
 	  display_name: linkedProfile.display_name,
       timestamp: Date.now()
     };
-	promiseList.push(this.database.ref(`postsLinkedProfiles/${postId}`).push(profileLinkObject).then(() => {console.log(linkedProfile + " added");}));
+	promiseList.push(this.database.ref(`posts_linked_profiles/${postId}`).push(profileLinkObject).then(() => {console.log(linkedProfile + " added");}));
 	});
 
     //return this.database.ref(`postsLinkedProfiles/${postId}`).push(profileLinkObject).then(() => {console.log(displayName + " added");});
@@ -492,6 +492,72 @@ friendlyPix.Firebase = class {
       update[`/people/${this.auth.currentUser.uid}/posts/${newPostKey}`] = true;
       update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
       return this.database.ref().update(update).then(() => newPostKey);
+    });
+  }
+  
+  
+    /**
+   * Uploads a new animal profile to Cloud Storage
+   */
+  uploadNewAnimalProfile(pic, thumb, fileName, animalName) {
+    // Get a reference to where the post will be created.
+    const newProfileKey = this.database.ref('/people').push().key;
+
+    // Start the pic file upload to Cloud Storage.
+    const picRef = this.storage.ref(`/${newProfileKey}/full/profile/${fileName}`);
+    const metadata = {
+      contentType: pic.type
+    };
+    var picUploadTask = picRef.put(pic, metadata).then(snapshot => {
+      console.log('New pic uploaded. Size:', snapshot.totalBytes, 'bytes.');
+      var url = snapshot.metadata.downloadURLs[0];
+      console.log('File available at', url);
+      return url;
+    }).catch(error => {
+      console.error('Error while uploading new pic', error);
+    });
+
+    // Start the thumb file upload to Cloud Storage.
+    const thumbRef = this.storage.ref(`${newProfileKey}/thumb/profile/${fileName}`);
+    var tumbUploadTask = thumbRef.put(thumb, metadata).then(snapshot => {
+      console.log('New thumb uploaded. Size:', snapshot.totalBytes, 'bytes.');
+      var url = snapshot.metadata.downloadURLs[0];
+      console.log('File available at', url);
+      return url;
+    }).catch(error => {
+      console.error('Error while uploading new thumb', error);
+    });
+	
+    return Promise.all([picUploadTask, tumbUploadTask]).then(urls => {
+      // Once both pics and thumbnails has been uploaded add a new post in the Firebase Database and
+      // to its fanned out posts lists (user's posts and home post).
+      let searchFullName = animalName.toLowerCase();
+      let searchReversedFullName = searchFullName.split(' ').reverse().join(' ');
+      try {
+        searchFullName = latinize(searchFullName);
+        searchReversedFullName = latinize(searchReversedFullName);
+      } catch (e) {
+        console.error(e);
+      }
+	  
+	  const update = {};
+      update[`/people/${newProfileKey}`] = {
+        profile_picture_full: urls[0],
+        profile_picture: urls[1],
+        full_name: animalName,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        full_storage_uri: picRef.toString(),
+        thumb_storage_uri: thumbRef.toString(),
+		animal_profile: true,
+		owner: this.auth.currentUser.uid,
+		_search_index: {
+        full_name: searchFullName,
+        reversed_full_name: searchReversedFullName
+        }
+      };
+      //update[`/people/${this.auth.currentUser.uid}/posts/${newPostKey}`] = true;
+      //update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
+      return this.database.ref().update(update).then(() => newProfileKey);
     });
   }
 

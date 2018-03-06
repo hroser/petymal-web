@@ -266,12 +266,12 @@ friendlyPix.NewAnimal = class {
 
     this.generateImages().then(pics => {
       // Upload the File upload to Cloud Storage and create new post.
-      friendlyPix.firebase.uploadNewPic(pics.full, pics.thumb, this.currentFile.name, newAnimalName, this.linkedProfiles)
-          .then(postId => {
-            page(`/user/${this.auth.currentUser.uid}`);
+      friendlyPix.firebase.uploadNewAnimalProfile(pics.full, pics.thumb, this.currentFile.name, newAnimalName)
+          .then(profileId => {
+            page(`/user/${profileId}`);
             var data = {
-              message: 'New pic has been posted!',
-              actionHandler: () => page(`/post/${postId}`),
+              message: 'New animal has beed added!',
+              actionHandler: () => page(`/user/${profileId}`),
               actionText: 'View',
               timeout: 10000
             };
@@ -280,7 +280,7 @@ friendlyPix.NewAnimal = class {
           }, error => {
             console.error(error);
             var data = {
-              message: `There was an error while posting your pic. Sorry!`,
+              message: `There was an error while adding new animal. Sorry!`,
               timeout: 5000
             };
             this.toast[0].MaterialSnackbar.showSnackbar(data);
