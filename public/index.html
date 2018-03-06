@@ -195,7 +195,11 @@
           Show new posts...
         </button>
       </div>
-	  <a href="/new-animal" class="mdl-layout__tab fp-signed-in-only mdl-button mdl-js-button mdl-js-ripple-effect"><button type="button" id="addNewAnimalButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">Add new animal</button></a>
+      
+      <button type="button" id="addNewAnimalButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
+         Add new animal
+      </button>
+
       <div class="fp-image-container mdl-cell mdl-cell--12-col mdl-grid">
         <div class="fp-no-posts fp-help mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet
                     mdl-cell--8-col-desktop mdl-grid mdl-grid--no-spacing">
@@ -352,6 +356,36 @@
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input class="mdl-textfield__input" type="text" id="newAnimalSpecies">
                 <label class="mdl-textfield__label" for="newAnimalSpecies">Species</label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="newAnimalIdentNumber">
+                <label class="mdl-textfield__label" for="newAnimalIdentNumber">Animal identification number</label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="newAnimalParentFemale">
+                <label class="mdl-textfield__label" for="newAnimalParentFemale">Parent (female)</label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="newAnimalParentMale">
+                <label class="mdl-textfield__label" for="newAnimalParentMale">Parent (male)</label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="date" id="newAnimalDateBirth">
+                <label class="mdl-textfield__label" for="newAnimalDateBirth">Date of birth</label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="newAnimalDied">
+                  <input class="mdl-switch__input" type="checkbox" id="newAnimalDied">
+                  <span class="mdl-switch__label">Died</span>
+                </label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="date" id="newAnimalDateDeath">
+                <label class="mdl-textfield__label" for="newAnimalDateDeath">Date of death</label>
+              </div><br>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="textarea" id="newAnimalDescription">
+                <label class="mdl-textfield__label" for="newAnimalDescription">Description</label>
               </div>
               <br />
 			  <button type="button" id="newAnimalImageButton" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400">
@@ -440,6 +474,7 @@
 <script src="/scripts/post.js"></script>
 <script src="/scripts/feed.js"></script>
 <script src="/scripts/routing.js"></script>
+<script src="/scripts/newanimal.js"></script>
 
 </body>
 </html>
