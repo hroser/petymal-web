@@ -356,7 +356,33 @@ a {
   font-size: 16px;
   font-weight: 400;
 }
+
+.fp-user-container,
+.fp-user-animal {
+  min-height: 150px;
+  height: 150px;
+  flex-direction: row;
+  align-items: center;
+  text-align: right;
+  margin: 23px 25px 0 24px;
+  display: flex;
+  background: #FFF;
+  font-size: 16px;
+  font-weight: 400;
+}
+
 .fp-user-following {
+  display: none;
+  padding: 30px 10px 10px 10px;
+  overflow: visible;
+  margin-top: 35px;
+  height: auto;
+  min-height: 50px;
+  text-align: left;
+  width: 100%;
+}
+
+.fp-user-animal {
   display: none;
   padding: 30px 10px 10px 10px;
   overflow: visible;
@@ -371,6 +397,13 @@ a {
   width: 215px;
   box-sizing: border-box;
 }
+
+.fp-user-animal .fp-usernamelink {
+  margin: 10px;
+  width: 215px;
+  box-sizing: border-box;
+}
+
 .fp-follow, .fp-notifications {
   width: 220px;
   text-align: left;
@@ -400,7 +433,8 @@ a {
 }
 #page-profile .fp-user-nbposts,
 #page-profile .fp-user-nbfollowers,
-#page-profile .fp-user-nbfollowing {
+#page-profile .fp-user-nbfollowing,
+#page-profile .fp-user-nbanimals {
   font-weight: bold;
 }
 #page-profile .fp-user-detail.is-active {
@@ -425,7 +459,21 @@ a {
   margin: -5px 10px -5px -5px;
   border-bottom: none;
 }
+#page-profile .fp-user-nbfollowing-animals:HOVER {
+  cursor: pointer;
+  background-color: #eaeaea;
+  border-radius: 5px;
+  padding: 5px;
+  margin: -5px 10px -5px -5px;
+  border-bottom: none;
+}
 #page-profile .fp-user-nbfollowing-container.is-active:HOVER {
+  border-bottom: 2px #FFCA28 solid;
+  padding: 5px 5px 3px 5px;
+  margin: -5px 10px -5px -5px;
+  border-radius: 5px 5px 0 0;
+}
+#page-profile .fp-user-nbfollowing-animals.is-active:HOVER {
   border-bottom: 2px #FFCA28 solid;
   padding: 5px 5px 3px 5px;
   margin: -5px 10px -5px -5px;
@@ -461,6 +509,9 @@ a {
     margin: 16px 16px 0 16px;
   }
   .fp-user-following {
+    margin: 35px 16px 0 16px;
+  }
+  .fp-user-animal {
     margin: 35px 16px 0 16px;
   }
   .fp-follow, .fp-notifications {

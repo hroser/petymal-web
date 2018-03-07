@@ -533,7 +533,7 @@ friendlyPix.Firebase = class {
    /**
    * Adds a profile link to a post.
    */
-  addProfileLink(postId, linkedProfiles, linkedProfileIds) {
+  addProfileLink(postId, linkedProfiles) {
 	var profileLinkObject;
 	var promiseList = [];
 	linkedProfiles.forEach(linkedProfile => {
@@ -638,8 +638,28 @@ friendlyPix.Firebase = class {
 	  console.log("generate update obj done");
       update[`/people/${this.auth.currentUser.uid}/posts/${newPostKey}`] = true;
       update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
-	  console.log("update feeds done");
-      return this.database.ref().update(update).then(() => {console.log("update done"); console.log(newPostKey); return newPostKey});
+	  
+	  linkedProfiles.forEach(linkedProfile => {
+	  // update feed from linked persons
+	  update[`/feed/${linkedProfile.profile_id}/${newPostKey}`] = true;
+	  // update animal posts for animal profile page
+	  this.isAnimalProfile(linkedProfile.profile_id).then(isAnimal => {
+		  console.log("isAnimal");
+		  console.log(linkedProfile.profile_id);
+		  console.log(isAnimal);
+		  console.log(linkedProfile.profile_id);
+		  console.log(newPostKey);
+		  if (isAnimal === true) {
+			  update[`/people/${linkedProfile.profile_id}/posts/${newPostKey}`] = true;
+		  }
+		  console.log("update feeds done");
+          return this.database.ref().update(update).then(() => {console.log("update done"); console.log(newPostKey); return newPostKey});
+	    });
+	  });
+	  
+	  
+	  
+	  
     });
   }
   
@@ -821,6 +841,15 @@ friendlyPix.Firebase = class {
     followingRef.on('value', data => followingCallback(data.numChildren()));
     this.firebaseRefs.push(followingRef);
   }
+  
+   /**
+   * Listens to updates on the followed people of a person and calls the callback with its count.
+   */
+  registerForAnimalsCount(uid, animalsCallback) {
+    const animalsRef = this.database.ref(`/people/${uid}/animals`);
+    animalsRef.on('value', data => animalsCallback(data.numChildren()));
+    this.firebaseRefs.push(animalsRef);
+  }
 
   /**
    * Listens for changes of the thumbnail URL of a given post.
@@ -836,6 +865,29 @@ friendlyPix.Firebase = class {
    */
   getFollowingProfiles(uid) {
     return this.database.ref(`/people/${uid}/following`).once('value').then(data => {
+      if (data.val()) {
+        const followingUids = Object.keys(data.val());
+        const fetchProfileDetailsOperations = followingUids.map(
+          followingUid => this.loadUserProfile(followingUid));
+        return Promise.all(fetchProfileDetailsOperations).then(results => {
+          const profiles = {};
+          results.forEach(result => {
+            if (result.val()) {
+              profiles[result.key] = result.val();
+            }
+          });
+          return profiles;
+        });
+      }
+      return {};
+    });
+  }
+  
+    /**
+   * Fetch the list of followed people's profile.
+   */
+  getAnimalProfiles(uid) {
+    return this.database.ref(`/people/${uid}/animals`).once('value').then(data => {
       if (data.val()) {
         const followingUids = Object.keys(data.val());
         const fetchProfileDetailsOperations = followingUids.map(

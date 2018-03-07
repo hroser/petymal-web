@@ -46,7 +46,10 @@ friendlyPix.ProfilePage = class {
       this.nbFollowers = $('.fp-user-nbfollowers', this.profilePage);
       this.nbFollowing = $('.fp-user-nbfollowing', this.profilePage);
       this.nbFollowingContainer = $('.fp-user-nbfollowing-container', this.profilePage);
-      this.followingContainer = $('.fp-user-following', this.profilePage);
+	  this.followingContainer = $('.fp-user-following', this.profilePage);
+	  this.nbAnimals = $('.fp-user-nbanimals', this.profilePage);
+      this.nbAnimalsContainer = $('.fp-user-nbanimals-container', this.profilePage);
+      this.animalsContainer = $('.fp-user-animal', this.profilePage);
       this.nextPageButton = $('.fp-next-page-button button');
       this.closeFollowingButton = $('.fp-close-following', this.profilePage);
       this.userInfoPageImageContainer = $('.fp-image-container', this.profilePage);
@@ -55,9 +58,12 @@ friendlyPix.ProfilePage = class {
       this.followCheckbox.change(() => this.onFollowChange());
       this.auth.onAuthStateChanged(() => this.trackFollowStatus());
       this.nbFollowingContainer.click(() => this.displayFollowing());
+	  this.nbAnimalsContainer.click(() => this.displayAnimals());
       this.closeFollowingButton.click(() => {
         this.followingContainer.hide();
+		this.animalsContainer.hide();
         this.nbFollowingContainer.removeClass('is-active');
+		this.nbAnimalsContainer.removeClass('is-active');
       });
     });
   }
@@ -165,15 +171,19 @@ friendlyPix.ProfilePage = class {
       }
     });
 
-    // Lod user's number of followers.
+    // Load user's number of followers.
     friendlyPix.firebase.registerForFollowersCount(profileId,
         nbFollowers => this.nbFollowers.text(nbFollowers));
 
-    // Lod user's number of followed users.
+    // Load user's number of followed users.
     friendlyPix.firebase.registerForFollowingCount(profileId,
         nbFollowed => this.nbFollowing.text(nbFollowed));
+		
+	// Load user's number of animals.
+    friendlyPix.firebase.registerForAnimalsCount(profileId,
+        nbAnimals => this.nbAnimals.text(nbAnimals));
 
-    // Lod user's number of posts.
+    // Load user's number of posts.
     friendlyPix.firebase.registerForPostsCount(profileId,
         nbPosts => this.nbPostsContainer.text(nbPosts));
 
@@ -205,6 +215,11 @@ friendlyPix.ProfilePage = class {
    * Displays the list of followed people.
    */
   displayFollowing() {
+	// Hide and empty the list of Followed people.
+    this.animalsContainer.hide();
+    $('.fp-usernamelink', this.animalsContainer).remove();
+	this.nbAnimalsContainer.removeClass('is-active');
+	
     friendlyPix.firebase.getFollowingProfiles(this.profileId).then(profiles => {
       // Clear previous following list.
       $('.fp-usernamelink', this.followingContainer).remove();
@@ -216,6 +231,30 @@ friendlyPix.ProfilePage = class {
         this.followingContainer.show();
         // Mark submenu as active.
         this.nbFollowingContainer.addClass('is-active');
+      }
+    });
+  }
+  
+   /**
+   * Displays the list of animals people.
+   */
+  displayAnimals() {
+	// Hide and empty the list of Followed people.
+    this.followingContainer.hide();
+    $('.fp-usernamelink', this.followingContainer).remove();
+	this.nbFollowingContainer.removeClass('is-active');
+	
+    friendlyPix.firebase.getAnimalProfiles(this.profileId).then(profiles => {
+      // Clear previous following list.
+      $('.fp-usernamelink', this.animalsContainer).remove();
+      // Display all following profile cards.
+      Object.keys(profiles).forEach(uid => this.animalsContainer.prepend(
+          friendlyPix.ProfilePage.createProfileCardHtml(
+              uid, profiles[uid].profile_picture, profiles[uid].full_name)));
+      if (Object.keys(profiles).length > 0) {
+        this.animalsContainer.show();
+        // Mark submenu as active.
+        this.nbAnimalsContainer.addClass('is-active');
       }
     });
   }
@@ -242,6 +281,10 @@ friendlyPix.ProfilePage = class {
     // Hide and empty the list of Followed people.
     this.followingContainer.hide();
     $('.fp-usernamelink', this.followingContainer).remove();
+	
+	// Hide and empty the list of Followed people.
+    this.animalsContainer.hide();
+    $('.fp-usernamelink', this.animalsContainer).remove();
 
     // Stops then infinite scrolling listeners.
     friendlyPix.MaterialUtils.stopOnEndScrolls();
