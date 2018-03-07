@@ -159,6 +159,19 @@ friendlyPix.Firebase = class {
     return this._getPaginatedFeed(`/people/${uid}/posts`,
         friendlyPix.Firebase.USER_PAGE_POSTS_PAGE_SIZE, null, true);
   }
+  
+  /**
+   * Paginates animals from the user's profile
+   *
+   * Fetches a page of `USER_PAGE_POSTS_PAGE_SIZE` animals from the user's animals
+   *
+   * We return a `Promise` which resolves with an Map of animals and a function to the next page or
+   * `null` if there is no next page.
+   */
+  getUserAnimals(uid) {
+    return this._getPaginatedAnimals(`/people/${uid}/animals`,
+        friendlyPix.Firebase.USER_PAGE_POSTS_PAGE_SIZE, null, true);
+  }
 
   /**
    * Subscribes to receive updates to the given feed. The given `callback` function gets called
@@ -250,6 +263,71 @@ friendlyPix.Firebase = class {
     });
   }
 
+  
+  /**
+   * Paginates entries from the given feed.
+   *
+   * Fetches a page of `pageSize` entries from the given feed.
+   *
+   * If provided we'll return entries that were posted before (and including) `earliestEntryId`.
+   *
+   * We return a `Promise` which resolves with an Map of entries and a function to the next page or
+   * `null` if there is no next page.
+   *
+   * If needed the posts details can be fetched. This is useful for shallow post feeds like the user
+   * home feed and the user post feed.
+   * @private
+   */
+  _getPaginatedAnimals(uri, pageSize, earliestEntryId = null, fetchAnimalDetails = false) {
+    console.log('Fetching entries from', uri, 'start at', earliestEntryId, 'page size', pageSize);
+    let ref = this.database.ref(uri);
+    if (earliestEntryId) {
+      ref = ref.orderByKey().endAt(earliestEntryId);
+    }
+    // We're fetching an additional item as a cheap way to test if there is a next page.
+    return ref.limitToLast(pageSize + 1).once('value').then(data => {
+      const entries = data.val() || {};
+
+      // Figure out if there is a next page.
+      let nextPage = null;
+      const entryIds = Object.keys(entries);
+      if (entryIds.length > pageSize) {
+        delete entries[entryIds[0]];
+        const nextPageStartingId = entryIds.shift();
+        nextPage = () => this._getPaginatedFeed(
+            uri, pageSize, nextPageStartingId, fetchPostDetails);
+      }
+	  if (fetchAnimalDetails) {
+        // Fetch details of all animals
+        const queries = entryIds.map(profileId => this.getAnimalData(profileId));
+        // Since all the requests are being done one the same feed it's unlikely that a single one
+        // would fail and not the others so using Promise.all() is not so risky.
+        return Promise.all(queries).then(results => {
+          const deleteOps = [];
+          results.forEach(result => {
+			console.log("result: "); 
+			console.log(result.val());
+            if (result.val()) {
+              entries[result.key] = result.val();
+            } else {
+              // We encountered a deleted animal. Removing permanently from the feed.
+              delete entries[result.key];
+              //deleteOps.push(this.deleteFromFeed(uri, result.key));
+            }
+          });
+          //if (deleteOps.length > 0) {
+            // We had to remove some deleted posts from the feed. Lets run the query again to get
+            // the correct number of posts.
+            //return this._getPaginatedFeed(uri, pageSize, earliestEntryId, fetchPostDetails);
+          //}
+          return {entries: entries, nextPage: nextPage};
+        });
+      }
+      return {entries: entries, nextPage: nextPage};
+    });
+  }
+  
+  
   /**
    * Keeps the home feed populated with latest followed users' posts live.
    */
@@ -382,7 +460,42 @@ friendlyPix.Firebase = class {
   getPostData(postId) {
     return this.database.ref(`/posts/${postId}`).once('value');
   }
+  
+  /**
+   * Fetches a single post data.
+   */
+  getAnimalData(profileId) {	  
+	console.log("fetched animal data for: " + profileId);
+    return this.database.ref(`/people/${profileId}`).once('value');
+  }
+  
+   /**
+   * determine if profile is animal profile
+   */
+  isAnimalProfile(profileId) {	  
+	console.log("checking if animal profile: " + profileId);
+	var isAnimal = false;
+	return this.database.ref(`/people/${profileId}`).once('value').then(data => {
+		console.log(data.val());
+	if (data.val()) 
+	{
+		console.log(data.val());
+		isAnimal = data.val().animal_profile;
+		if (isAnimal == null || isAnimal === false)
+		{
+			console.log("isanimal false");
+			return false;
+		}
+		console.log("isanimal true");
+		return true;
+	}
+	return false;
+	});
+		
 
+  }
+  
+ 
   /**
    * Subscribe to receive updates on a user's post like status.
    */
@@ -444,30 +557,43 @@ friendlyPix.Firebase = class {
     // Get a reference to where the post will be created.
     const newPostKey = this.database.ref('/posts').push().key;
 
-    // Start the pic file upload to Cloud Storage.
-    const picRef = this.storage.ref(`${this.auth.currentUser.uid}/full/${newPostKey}/${fileName}`);
-    const metadata = {
-      contentType: pic.type
-    };
-    var picUploadTask = picRef.put(pic, metadata).then(snapshot => {
-      console.log('New pic uploaded. Size:', snapshot.totalBytes, 'bytes.');
-      var url = snapshot.metadata.downloadURLs[0];
-      console.log('File available at', url);
-      return url;
-    }).catch(error => {
-      console.error('Error while uploading new pic', error);
-    });
-
-    // Start the thumb file upload to Cloud Storage.
-    const thumbRef = this.storage.ref(`${this.auth.currentUser.uid}/thumb/${newPostKey}/${fileName}`);
-    var tumbUploadTask = thumbRef.put(thumb, metadata).then(snapshot => {
-      console.log('New thumb uploaded. Size:', snapshot.totalBytes, 'bytes.');
-      var url = snapshot.metadata.downloadURLs[0];
-      console.log('File available at', url);
-      return url;
-    }).catch(error => {
-      console.error('Error while uploading new thumb', error);
-    });
+	const metadata = {
+		  contentType: pic.type
+		};
+	
+	const picRef = this.storage.ref(`${this.auth.currentUser.uid}/full/${newPostKey}/${fileName}`);
+	if (pic){
+		// Start the pic file upload to Cloud Storage.
+		
+		var picUploadTask = picRef.put(pic, metadata).then(snapshot => {
+		  console.log('New pic uploaded. Size:', snapshot.totalBytes, 'bytes.');
+		  var url = snapshot.metadata.downloadURLs[0];
+		  console.log('File available at', url);
+		  return url;
+		}).catch(error => {
+		  console.error('Error while uploading new pic', error);
+		});
+	} 
+	else {
+		var picUploadTask = null;
+	}
+    
+	const thumbRef = this.storage.ref(`${this.auth.currentUser.uid}/thumb/${newPostKey}/${fileName}`);
+	if (thumb) {
+		// Start the thumb file upload to Cloud Storage.
+		
+		var tumbUploadTask = thumbRef.put(thumb, metadata).then(snapshot => {
+		  console.log('New thumb uploaded. Size:', snapshot.totalBytes, 'bytes.');
+		  var url = snapshot.metadata.downloadURLs[0];
+		  console.log('File available at', url);
+		  return url;
+		}).catch(error => {
+		  console.error('Error while uploading new thumb', error);
+		});
+	}
+	else {
+		var tumbUploadTask = null;
+	}
 	
 	// add profile links
     var addProfileLinksTask = this.addProfileLink(newPostKey, linkedProfiles);
@@ -476,6 +602,10 @@ friendlyPix.Firebase = class {
       // Once both pics and thumbnails has been uploaded add a new post in the Firebase Database and
       // to its fanned out posts lists (user's posts and home post).
       const update = {};
+	  if (!urls[0])
+	  {
+		  var urls = ["no pic", "no thumb"]
+	  }
       update[`/posts/${newPostKey}`] = {
         full_url: urls[0],
         thumb_url: urls[1],
@@ -555,7 +685,7 @@ friendlyPix.Firebase = class {
         reversed_full_name: searchReversedFullName
         }
       };
-      //update[`/people/${this.auth.currentUser.uid}/posts/${newPostKey}`] = true;
+      update[`/people/${this.auth.currentUser.uid}/animals/${newProfileKey}`] = true;
       //update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
       return this.database.ref().update(update).then(() => newProfileKey);
     });

@@ -267,6 +267,12 @@ friendlyPix.Uploader = class {
     this.disableUploadUi(true);
     var imageCaption = this.imageCaptionInput.val();
 
+	if (!this.currentFile){
+		friendlyPix.firebase.uploadNewPic(null, null, "", imageCaption, this.linkedProfiles);
+		return;
+	}
+	
+	
     this.generateImages().then(pics => {
       // Upload the File upload to Cloud Storage and create new post.
       friendlyPix.firebase.uploadNewPic(pics.full, pics.thumb, this.currentFile.name, imageCaption, this.linkedProfiles)

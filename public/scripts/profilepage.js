@@ -137,7 +137,8 @@ friendlyPix.ProfilePage = class {
       friendlyPix.messaging.enableNotificationsCheckbox.prop('disabled', true);
       friendlyPix.MaterialUtils.refreshSwitchState(friendlyPix.messaging.enableNotificationsContainer);
       friendlyPix.messaging.trackNotificationsEnabledStatus();
-    } else {
+	}
+	else {
       friendlyPix.messaging.enableNotificationsContainer.hide();
       this.followContainer.show();
       this.followCheckbox.prop('disabled', true);
