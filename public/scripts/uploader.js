@@ -347,12 +347,22 @@ friendlyPix.Uploader = class {
    * If a linked profile is seleted add it above the text field
    */
   addLinkedProfile(profileID) {
-	  // create list of linked profiles
-	  linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + this.availableProfiles[this.availableProfileIDs.indexOf(profileID)];
+  	let result = this.linkedProfiles.find(profile => profile.profile_id === profileID);
+
+  	if (result == null){
+  	  // create list of linked profiles
+	  //linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + this.availableProfiles[this.availableProfileIDs.indexOf(profileID)];
+	  friendlyPix.firebase.loadUserProfile(profileID).then(data => {
+  		if (data.val()){
+  			linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + friendlyPix.ProfilePage.createProfileCardHtml(profileID, data.val().profile_picture, data.val().full_name);
+  		}
+	  });
+	  
 	  var linkedProfileObject = {display_name: this.availableProfiles[this.availableProfileIDs.indexOf(profileID)], profile_id: profileID };
 	  this.linkedProfiles.push(linkedProfileObject);
 	  console.log(linkedProfileObject);
 	  console.log(this.linkedProfiles);
+  	}
   }
   
   

@@ -530,24 +530,6 @@ friendlyPix.Firebase = class {
     return this.database.ref(`comments/${postId}`).push(commentObject);
   }
   
-   /**
-   * Adds a profile link to a post.
-   */
-  addProfileLink(postId, linkedProfiles) {
-	var profileLinkObject;
-	var promiseList = [];
-	linkedProfiles.forEach(linkedProfile => {
-	profileLinkObject = {
-      profile_id: linkedProfile.profile_id,
-	  display_name: linkedProfile.display_name,
-      timestamp: Date.now()
-    };
-	promiseList.push(this.database.ref(`posts_linked_profiles/${postId}`).push(profileLinkObject).then(() => {console.log(linkedProfile + " added");}));
-	});
-
-    //return this.database.ref(`postsLinkedProfiles/${postId}`).push(profileLinkObject).then(() => {console.log(displayName + " added");});
-	return Promise.all(promiseList).then(() => {console.log("Promise ok");});
-  }
 
   /**
    * Uploads a new Picture to Cloud Storage and adds a new post referencing it.
@@ -604,10 +586,8 @@ friendlyPix.Firebase = class {
 	else {
 		var tumbUploadTask = null;
 	}
+
 	
-	// add profile links
-    var addProfileLinksTask = this.addProfileLink(newPostKey, linkedProfiles);
-	//jobs.push(addProfileLinksTask);
 	
 	console.log("jobs");
 	console.log(jobs);
@@ -640,6 +620,8 @@ friendlyPix.Firebase = class {
       update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
 	  
 	  linkedProfiles.forEach(linkedProfile => {
+	  // add linked profile id to post
+	  update[`/posts_linked_profiles/${newPostKey}/${linkedProfile.profile_id}`] = true;
 	  // update feed from linked persons
 	  update[`/feed/${linkedProfile.profile_id}/${newPostKey}`] = true;
 	  // update animal posts for animal profile page

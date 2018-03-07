@@ -106,27 +106,12 @@ friendlyPix.Post = class {
 	console.log("display linked profiles: ");
 	console.log(profileIds);
     for (let i = profileIds.length - 1; i >= 0; i--) {
-	  friendlyPix.firebase.loadUserProfile(profiles[profileIds[i]].profile_id).then(data => {
-	  $('.fp-linked-profiles', this.postElement).append(
-          friendlyPix.ProfilePage.createProfileCardHtml(data.key,
-              data.val().profile_picture, data.val().full_name));
-	});
+    	$('.fp-linked-profiles', this.postElement).append(
+          friendlyPix.ProfilePage.createProfileCardHtml(profileIds[i],
+              profiles[profileIds[i]].profile_picture, profiles[profileIds[i]].full_name));
     }
   }
-  
-  /**
-   * load linked pages
-   */
-  linkedProfiles(postId) {
 
-    // We're fetching an additional item as a cheap way to test if there is a next page.
-    return this.database.ref(`/posts_linked_profiles/${postId}`).once('value').then(data => {
-		console.log("fetched linked profiles");
-		console.log(data.val());
-		return data.val();
-	});
-
-  }
 
   /**
    * Shows the "show more comments" button and binds it the `nextPage` callback. If `nextPage` is
@@ -246,7 +231,7 @@ friendlyPix.Post = class {
 
 	
 	// display linked profiles
-	this.linkedProfiles(postId).then(linkedProfiles => {
+	friendlyPix.firebase.getLinkedProfiles(postId).then(linkedProfiles => {
       console.log("in setupComments got linkedProfiles");
 	  console.log(linkedProfiles);
 	  this.displayLinkedProfiles(linkedProfiles);

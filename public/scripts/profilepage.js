@@ -329,6 +329,26 @@ friendlyPix.ProfilePage = class {
             <div class="fp-username mdl-color-text--black">${fullName}</div>
         </a>`;
   }
+  
+  /**
+   * Returns an image Card element for the image with the given URL.
+   */
+  static createProfileCardHtmlbyId(uid) {
+  	//this.database.ref(`/people/${uid}`).once('value').then(data => 
+  	friendlyPix.firebase.loadUserProfile(uid).then(data => {
+  		if (data.val()){
+  			return this.createProfileCardHtml(uid, data.val().profile_picture, data.val().full_name);
+  		}
+  		else {
+  			return this.createProfileCardHtml(uid, '/images/silhouette.jpg', 'Anonymous');	
+  		}
+  	});
+    
+  }
+  
+  
+  
+  
 };
 
 friendlyPix.profilePage = new friendlyPix.ProfilePage();

@@ -278,6 +278,9 @@ a {
   display: block;
   text-align: center;
 }
+.linkedProfilesList {
+	text-align: left;
+}
 #page-add .fp-addcontainer .fp-overlay {
   opacity: 0.7;
 }
