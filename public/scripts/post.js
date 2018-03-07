@@ -94,6 +94,39 @@ friendlyPix.Post = class {
               comments[commentsIds[i]].text));
     }
   }
+  
+   /**
+   * Displays linked profiles
+   */
+  displayLinkedProfiles(profiles) {
+	if (!profiles){
+		return;
+	}
+    const profileIds = Object.keys(profiles);
+	console.log("display linked profiles: ");
+	console.log(profileIds);
+    for (let i = profileIds.length - 1; i >= 0; i--) {
+	  friendlyPix.firebase.loadUserProfile(profiles[profileIds[i]].profile_id).then(data => {
+	  $('.fp-linked-profiles', this.postElement).append(
+          friendlyPix.ProfilePage.createProfileCardHtml(data.key,
+              data.val().profile_picture, data.val().full_name));
+	});
+    }
+  }
+  
+  /**
+   * load linked pages
+   */
+  linkedProfiles(postId) {
+
+    // We're fetching an additional item as a cheap way to test if there is a next page.
+    return this.database.ref(`/posts_linked_profiles/${postId}`).once('value').then(data => {
+		console.log("fetched linked profiles");
+		console.log(data.val());
+		return data.val();
+	});
+
+  }
 
   /**
    * Shows the "show more comments" button and binds it the `nextPage` callback. If `nextPage` is
@@ -202,6 +235,18 @@ friendlyPix.Post = class {
   _setupComments(postId, author, imageText) {
     const post = this.postElement;
 
+	
+	// display linked profiles
+	this.linkedProfiles(postId).then(linkedProfiles => {
+      console.log("in setupComments got linkedProfiles");
+	  console.log(linkedProfiles);
+	  this.displayLinkedProfiles(linkedProfiles);
+	});
+	
+
+	
+	
+	
     // Creates the initial comment with the post's text.
     $('.fp-first-comment', post).empty();
     $('.fp-first-comment', post).append(friendlyPix.Post.createCommentHtml(author, imageText));
@@ -351,6 +396,7 @@ friendlyPix.Post = class {
             </div>
             <div class="fp-image"></div>
             <div class="fp-likes">0 likes</div>
+			<div class="fp-linked-profiles"></div>
             <div class="fp-first-comment"></div>
             <div class="fp-morecomments">View more comments...</div>
             <div class="fp-comments"></div>
@@ -380,6 +426,7 @@ friendlyPix.Post = class {
             <span class="fp-text">${$('<div>').text(text).html()}</span>
         </div>`;
   }
+
 
   /**
    * Given the time of creation of a post returns how long since the creation of the post in text

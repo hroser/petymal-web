@@ -557,9 +557,17 @@ friendlyPix.Firebase = class {
     // Get a reference to where the post will be created.
     const newPostKey = this.database.ref('/posts').push().key;
 
-	const metadata = {
+	var metadata;
+	if (pic) {
+		metadata = {
 		  contentType: pic.type
 		};
+	}
+	else {
+		metadata = {};
+	}
+	
+	var jobs = [];
 	
 	const picRef = this.storage.ref(`${this.auth.currentUser.uid}/full/${newPostKey}/${fileName}`);
 	if (pic){
@@ -573,6 +581,7 @@ friendlyPix.Firebase = class {
 		}).catch(error => {
 		  console.error('Error while uploading new pic', error);
 		});
+		jobs.push(picUploadTask);
 	} 
 	else {
 		var picUploadTask = null;
@@ -590,6 +599,7 @@ friendlyPix.Firebase = class {
 		}).catch(error => {
 		  console.error('Error while uploading new thumb', error);
 		});
+		jobs.push(tumbUploadTask);
 	}
 	else {
 		var tumbUploadTask = null;
@@ -597,11 +607,17 @@ friendlyPix.Firebase = class {
 	
 	// add profile links
     var addProfileLinksTask = this.addProfileLink(newPostKey, linkedProfiles);
-
-    return Promise.all([picUploadTask, tumbUploadTask, addProfileLinksTask]).then(urls => {
+	//jobs.push(addProfileLinksTask);
+	
+	console.log("jobs");
+	console.log(jobs);
+	
+    return Promise.all(jobs).then(urls => {
       // Once both pics and thumbnails has been uploaded add a new post in the Firebase Database and
       // to its fanned out posts lists (user's posts and home post).
-      const update = {};
+      console.log("uploads done");
+	  
+	  const update = {};
 	  if (!urls[0])
 	  {
 		  var urls = ["no pic", "no thumb"]
@@ -619,9 +635,11 @@ friendlyPix.Firebase = class {
           profile_picture: this.auth.currentUser.photoURL
         }
       };
+	  console.log("generate update obj done");
       update[`/people/${this.auth.currentUser.uid}/posts/${newPostKey}`] = true;
       update[`/feed/${this.auth.currentUser.uid}/${newPostKey}`] = true;
-      return this.database.ref().update(update).then(() => newPostKey);
+	  console.log("update feeds done");
+      return this.database.ref().update(update).then(() => {console.log("update done"); console.log(newPostKey); return newPostKey});
     });
   }
   
@@ -820,6 +838,31 @@ friendlyPix.Firebase = class {
     return this.database.ref(`/people/${uid}/following`).once('value').then(data => {
       if (data.val()) {
         const followingUids = Object.keys(data.val());
+        const fetchProfileDetailsOperations = followingUids.map(
+          followingUid => this.loadUserProfile(followingUid));
+        return Promise.all(fetchProfileDetailsOperations).then(results => {
+          const profiles = {};
+          results.forEach(result => {
+            if (result.val()) {
+              profiles[result.key] = result.val();
+            }
+          });
+          return profiles;
+        });
+      }
+      return {};
+    });
+  }
+  
+   /**
+   * Fetch the list of followed people's profile.
+   */
+  getLinkedProfiles(postId) {
+    return this.database.ref(`/posts_linked_profiles/${postId}`).once('value').then(data => {
+      if (data.val()) {
+        const followingUids = Object.keys(data.val());
+		console.log("followingUids");
+		console.log(followingUids);
         const fetchProfileDetailsOperations = followingUids.map(
           followingUid => this.loadUserProfile(followingUid));
         return Promise.all(fetchProfileDetailsOperations).then(results => {

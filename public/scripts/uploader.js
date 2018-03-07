@@ -268,15 +268,36 @@ friendlyPix.Uploader = class {
     var imageCaption = this.imageCaptionInput.val();
 
 	if (!this.currentFile){
-		friendlyPix.firebase.uploadNewPic(null, null, "", imageCaption, this.linkedProfiles);
+		friendlyPix.firebase.uploadNewPic(null, null, "", imageCaption, this.linkedProfiles).then(postId => {
+			console.log("uploadNewPic done");
+            page(`/user/${this.auth.currentUser.uid}`);
+            var data = {
+              message: 'New pic has been posted!',
+              actionHandler: () => page(`/post/${postId}`),
+              actionText: 'View',
+              timeout: 10000
+            };
+            this.toast[0].MaterialSnackbar.showSnackbar(data);
+            this.disableUploadUi(false);
+          }, error => {
+            console.error(error);
+            var data = {
+              message: `There was an error while posting your pic. Sorry!`,
+              timeout: 5000
+            };
+            this.toast[0].MaterialSnackbar.showSnackbar(data);
+            this.disableUploadUi(false);
+          });
 		return;
 	}
 	
 	
     this.generateImages().then(pics => {
       // Upload the File upload to Cloud Storage and create new post.
+	  console.log("uploadNewPic started");
       friendlyPix.firebase.uploadNewPic(pics.full, pics.thumb, this.currentFile.name, imageCaption, this.linkedProfiles)
           .then(postId => {
+			console.log("uploadNewPic done");
             page(`/user/${this.auth.currentUser.uid}`);
             var data = {
               message: 'New pic has been posted!',
