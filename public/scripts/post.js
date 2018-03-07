@@ -249,7 +249,7 @@ friendlyPix.Post = class {
 	
     // Creates the initial comment with the post's text.
     $('.fp-first-comment', post).empty();
-    $('.fp-first-comment', post).append(friendlyPix.Post.createCommentHtml(author, imageText));
+    $('.fp-first-comment', post).append(friendlyPix.Post.createPostTextHtml(author, imageText));
 
     // Load first page of comments and listen to new comments.
     $('.fp-comments', post).empty();
@@ -394,10 +394,10 @@ friendlyPix.Post = class {
               </button>
               <a href="/post/" class="fp-time">now</a>
             </div>
+			<div class="fp-first-comment"></div>
             <div class="fp-image"></div>
             <div class="fp-likes">0 likes</div>
 			<div class="fp-linked-profiles"></div>
-            <div class="fp-first-comment"></div>
             <div class="fp-morecomments">View more comments...</div>
             <div class="fp-comments"></div>
             <div class="fp-action">
@@ -424,6 +424,16 @@ friendlyPix.Post = class {
         <div class="fp-comment">
             <a class="fp-author" href="/user/${author.uid}">${$('<div>').text(author.full_name || 'Anonymous').html()}</a>:
             <span class="fp-text">${$('<div>').text(text).html()}</span>
+        </div>`;
+  }
+  
+    /**
+   * Returns the HTML for a post's text
+   */
+  static createPostTextHtml(author, text) {
+    return `
+        <div class="fp-comment">
+            <span class="fp-title-text">${$('<div>').text(text).html()}</span>
         </div>`;
   }
 

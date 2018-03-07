@@ -633,6 +633,11 @@ a {
   color: #444;
   transition: all 0.2s;
 }
+.fp-title-text {
+  margin-left: 5px;
+  color: #444;
+  transition: all 0.2s;
+}
 .fp-post .fp-action {
   padding: 0 10px 0 10px;
   display: flex;
