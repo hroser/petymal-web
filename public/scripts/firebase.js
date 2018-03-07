@@ -651,6 +651,16 @@ friendlyPix.Firebase = class {
 		  console.log(newPostKey);
 		  if (isAnimal === true) {
 			  update[`/people/${linkedProfile.profile_id}/posts/${newPostKey}`] = true;
+			  
+			  this.database.ref(`/people/${linkedProfile.profile_id}`).once('value').then(data => {
+				  var ownerId = data.val().owner;
+				  if (linkedProfile.profile_id != ownerId) {
+					  update[`/feed/${ownerId}/${newPostKey}`] = true;
+					  console.log("update feeds done");
+					  return this.database.ref().update(update).then(() => {console.log("update done"); console.log(newPostKey); return newPostKey});
+				  }
+			  })
+			  
 		  }
 		  console.log("update feeds done");
           return this.database.ref().update(update).then(() => {console.log("update done"); console.log(newPostKey); return newPostKey});
