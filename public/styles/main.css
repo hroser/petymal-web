@@ -459,7 +459,7 @@ a {
   margin: -5px 10px -5px -5px;
   border-bottom: none;
 }
-#page-profile .fp-user-nbfollowing-animals:HOVER {
+#page-profile .fp-user-nbanimals-container:HOVER {
   cursor: pointer;
   background-color: #eaeaea;
   border-radius: 5px;
@@ -473,7 +473,7 @@ a {
   margin: -5px 10px -5px -5px;
   border-radius: 5px 5px 0 0;
 }
-#page-profile .fp-user-nbfollowing-animals.is-active:HOVER {
+#page-profile .fp-user-nbanimals-container.is-active:HOVER {
   border-bottom: 2px #FFCA28 solid;
   padding: 5px 5px 3px 5px;
   margin: -5px 10px -5px -5px;
