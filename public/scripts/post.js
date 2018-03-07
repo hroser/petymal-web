@@ -209,9 +209,18 @@ friendlyPix.Post = class {
   _setupThumb(thumbUrl, picUrl) {
     const post = this.postElement;
 
-    $('.fp-image', post).css('background-image', `url("${thumbUrl ? thumbUrl.replace(/"/g, '\\"') : ''}")`);
-    $('.fp-image', post).unbind('click');
-    $('.fp-image', post).click(() => this.enterTheatreMode(picUrl || thumbUrl));
+	console.log("picUrl: " + picUrl);
+	if (picUrl === "no pic")
+	{
+		$('.fp-image', post).remove();
+	}
+	else {
+		$('.fp-image', post).css('background-image', `url("${thumbUrl ? thumbUrl.replace(/"/g, '\\"') : ''}")`);
+		$('.fp-image', post).unbind('click');
+		$('.fp-image', post).click(() => this.enterTheatreMode(picUrl || thumbUrl));
+	}
+	
+    
   }
 
   /**
@@ -396,8 +405,11 @@ friendlyPix.Post = class {
             </div>
 			<div class="fp-first-comment"></div>
             <div class="fp-image"></div>
-            <div class="fp-likes">0 likes</div>
+			
 			<div class="fp-linked-profiles"></div>
+			
+            <div class="fp-likes">0 likes</div>
+			
             <div class="fp-morecomments">View more comments...</div>
             <div class="fp-comments"></div>
             <div class="fp-action">

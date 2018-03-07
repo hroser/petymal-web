@@ -583,6 +583,16 @@ a {
 .fp-post .fp-header {
   padding: 10px;
 }
+.fp-linked-profiles {
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.fp-image {
+  margin-top: 10px;
+}
+
 .fp-post .fp-time {
   float: right;
   color: #999;
