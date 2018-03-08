@@ -875,8 +875,8 @@ friendlyPix.Firebase = class {
     });
   }
   
-    /**
-   * Fetch the list of followed people's profile.
+   /**
+   * Fetch the list of users animals
    */
   getAnimalProfiles(uid) {
     return this.database.ref(`/people/${uid}/animals`).once('value').then(data => {
@@ -889,6 +889,33 @@ friendlyPix.Firebase = class {
           results.forEach(result => {
             if (result.val()) {
               profiles[result.key] = result.val();
+            }
+          });
+          return profiles;
+        });
+      }
+      return {};
+    });
+  }
+  
+  
+  /**
+   * Fetch list of followed and own animals
+   */
+  getAutoSuggestAnimals(uid) {
+    return this.database.ref(`/people/${uid}/animals`).once('value').then(data => {
+      if (data.val()) {
+        const followingUids = Object.keys(data.val());
+        const fetchProfileDetailsOperations = followingUids.map(
+          followingUid => this.loadUserProfile(followingUid));
+        return Promise.all(fetchProfileDetailsOperations).then(results => {
+          const profiles = {};
+          results.forEach(result => {
+            if (result.val()) {
+				if (result.val().animal_profile == true) {
+					profiles[result.key] = result.val();
+				}
+        
             }
           });
           return profiles;

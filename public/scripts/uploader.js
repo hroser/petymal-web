@@ -126,31 +126,29 @@ friendlyPix.Uploader = class {
     this.uploadButton.prop('disabled', true);
     this.disableUploadUi(false);
 	
+	this.availableProfiles = [];
+	this.availableProfileIDs = [];
 
-	// TODO, clean .. !!
-	
-	
-	//var availableProfiles = friendlyPix.firebase.getFollowingProfiles('fpIh4fz1bwhFEpz1aat3t1UKCWk2');
-	
-	//var availableProfiles = friendlyPix.feed.showGeneralFeed();
-
-	
-	//friendlyPix.firebase.getFollowingProfiles().then(full_name => { })
-	
-	//friendlyPix.firebase.getFollowingProfiles('fpIh4fz1bwhFEpz1aat3t1UKCWk2').then(data => { 
-	friendlyPix.firebase.getFollowingProfiles(this.auth.currentUser.uid).then(data => { 
-	console.log(data);
-	for (var key in data) {
-    console.log(key);
-	console.log(data[key]["full_name"]);
-	this.availableProfiles.push(data[key]["full_name"]);
-	this.availableProfileIDs.push(key);
-	console.log(this.availableProfiles);
-	}
-
+	friendlyPix.firebase.getFollowingProfiles(this.auth.currentUser.uid).then(dataFollowing => { 
+		console.log("getAutoSuggestProfiles");
+		console.log(dataFollowing);
+		
+		friendlyPix.firebase.getAnimalProfiles(this.auth.currentUser.uid).then(dataAnimal => { 
+			for (var key in dataFollowing) {
+				this.availableProfiles.push(dataFollowing[key]["full_name"]);
+				this.availableProfileIDs.push(key);
+				console.log(this.availableProfiles);
+			}
+			for (var key in dataAnimal) {
+				if (this.availableProfileIDs.indexOf(key) < 0) {
+				 this.availableProfileIDs.push(key);
+				 this.availableProfiles.push(dataAnimal[key]["full_name"]);
+				}
+				console.log(this.availableProfiles);
+			}
+			this.initLinkProfilesInputAutocomplete(linkProfilesInput, this.availableProfileIDs, this.availableProfiles, this);
+		});
 	})
-	
-	this.initLinkProfilesInputAutocomplete(linkProfilesInput, this.availableProfileIDs, this.availableProfiles, this);
   }
 
 

@@ -122,33 +122,39 @@ friendlyPix.NewAnimal = class {
 	this.newAnimalName.focus();
     this.uploadButton.prop('disabled', true);
     this.disableUploadUi(false);
-	
 
-	// TODO, clean .. !!
-	
-	
-	//var availableProfiles = friendlyPix.firebase.getFollowingProfiles('fpIh4fz1bwhFEpz1aat3t1UKCWk2');
-	
-	//var availableProfiles = friendlyPix.feed.showGeneralFeed();
+	this.availableProfiles = [];
+    this.availableProfileIDs = [];
 
-	
-	//friendlyPix.firebase.getFollowingProfiles().then(full_name => { })
-	
-	//friendlyPix.firebase.getFollowingProfiles('fpIh4fz1bwhFEpz1aat3t1UKCWk2').then(data => { 
-	friendlyPix.firebase.getFollowingProfiles(this.auth.currentUser.uid).then(data => { 
-	console.log(data);
-	for (var key in data) {
-    console.log(key);
-	console.log(data[key]["full_name"]);
-	this.availableProfiles.push(data[key]["full_name"]);
-	this.availableProfileIDs.push(key);
-	console.log(this.availableProfiles);
-	}
-
+		
+	friendlyPix.firebase.getFollowingProfiles(this.auth.currentUser.uid).then(dataFollowing => { 
+		console.log("getAutoSuggestProfiles");
+		console.log(dataFollowing);
+		
+		friendlyPix.firebase.getAnimalProfiles(this.auth.currentUser.uid).then(dataAnimal => { 
+			for (var key in dataFollowing) {
+				if (dataFollowing[key]["animal_profile"] == true) {
+					this.availableProfiles.push(dataFollowing[key]["full_name"]);
+					this.availableProfileIDs.push(key);
+					console.log(this.availableProfiles);
+				}
+				
+			}
+			for (var key in dataAnimal) {
+				if (this.availableProfileIDs.indexOf(key) < 0) {
+					if (dataAnimal[key]["animal_profile"] == true) {
+						 this.availableProfileIDs.push(key);
+						 this.availableProfiles.push(dataAnimal[key]["full_name"]);
+					}
+				}
+				console.log(this.availableProfiles);
+			}
+			this.initAutocomplete(newAnimalParentFemale, this.availableProfileIDs, this.availableProfiles, this);
+			this.initAutocomplete(newAnimalParentMale, this.availableProfileIDs, this.availableProfiles, this);
+		});
 	})
 	
-	this.initAutocomplete(newAnimalParentFemale, this.availableProfiles, this);
-	this.initAutocomplete(newAnimalParentMale, this.availableProfiles, this);
+
   }
 
 
@@ -317,7 +323,7 @@ friendlyPix.NewAnimal = class {
   /**
   * Autocomplete text box for users or animals
   */
-  initAutocomplete(inp, arr, maindoc) {
+  initAutocomplete(inp, arrProfileIDs, arrProfileNames, maindoc) {
   /*the autocomplete function takes two arguments,
   the text field element and an array of possible autocompleted values:*/
   var currentFocus;
@@ -335,16 +341,16 @@ friendlyPix.NewAnimal = class {
       /*append the DIV element as a child of the autocomplete container:*/
       this.parentNode.appendChild(a);
       /*for each item in the array...*/
-      for (i = 0; i < arr.length; i++) {
+      for (i = 0; i < arrProfileIDs.length; i++) {
         /*check if the item starts with the same letters as the text field value:*/
-        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        if (arrProfileNames[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
-          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(val.length);
+          b.innerHTML = "<strong>" + arrProfileNames[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arrProfileNames[i].substr(val.length);
           /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          b.innerHTML += "<input type='hidden' value='" + arrProfileIDs[i] + "'>";
           /*execute a function when someone clicks on the item value (DIV element):*/
               b.addEventListener("click", function(e) {
               /*insert the value for the autocomplete text field:*/
