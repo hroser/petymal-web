@@ -74,6 +74,7 @@ friendlyPix.Uploader = class {
 	  this.linkProfilesInput = $('#linkProfilesInput');
       this.uploadPicForm = $('#uploadPicForm');
       this.toast = $('.mdl-js-snackbar');
+	  
 
       // Event bindings
       this.addButton.click(() => this.initiateAddPage());
@@ -347,14 +348,30 @@ friendlyPix.Uploader = class {
    * If a linked profile is seleted add it above the text field
    */
   addLinkedProfile(profileID) {
-  	let result = this.linkedProfiles.find(profile => profile.profile_id === profileID);
+	
 
+  	let result = this.linkedProfiles.find(profile => profile.profile_id === profileID);
   	if (result == null){
   	  // create list of linked profiles
 	  //linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + this.availableProfiles[this.availableProfileIDs.indexOf(profileID)];
 	  friendlyPix.firebase.loadUserProfile(profileID).then(data => {
   		if (data.val()){
-  			linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + friendlyPix.ProfilePage.createProfileCardHtml(profileID, data.val().profile_picture, data.val().full_name);
+			
+			const card = new friendlyPix.profileCard();
+			
+			// Fills element
+			$('.fp-avatar', card).css('background-image',
+				`url(${data.val().profile_picture || '/images/silhouette.jpg'})`);
+			$('.fp-username', card).text(data.val().full_name || 'Anonymous');
+			this.linkedProfilesList.append(card);
+
+  			//linkedProfilesList.innerHTML = linkedProfilesList.innerHTML + "<br>" + card.innerHTML;
+			$('.fp-username', card).off('click');
+			$('.fp-username', card).click(() => {
+				this.removeLinkedProfile(profileID);
+				card.remove()
+			});
+			//$('.fp-username', card).click(() => this.removeLinkedProfile(profileID));
   		}
 	  });
 	  
@@ -365,6 +382,22 @@ friendlyPix.Uploader = class {
   	}
   }
   
+  /**
+  * Autocomplete text box for users or animals
+  */
+  removeLinkedProfile(profileID) {
+	  console.log("remove " + profileID);
+	  let result = this.linkedProfiles.find(profile => profile.profile_id === profileID);
+	  console.log("result");
+	  console.log(result);
+	  if (result){
+		  var index = this.linkedProfiles.indexOf(result);
+		  console.log("index");
+		  console.log(index);
+		  this.linkedProfiles.splice(index, 1);
+		  console.log(this.linkedProfiles);
+	  }
+  }
   
   
   /**
@@ -473,5 +506,23 @@ document.addEventListener("click", function (e) {
   
   
 };
+
+friendlyPix.profileCard = class {
+
+  /**
+   * Initializes the single post's UI.
+   * @constructor
+   */
+  constructor() {
+	  $(document).ready(() => {
+      // DOM Elements
+      this.cardElement = $(friendlyPix.ProfilePage.createProfileCardHtmlButton()); 
+	});
+	  
+	  
+	  const card = this.cardElement;
+	  return card;
+  }
+}
 
 friendlyPix.uploader = new friendlyPix.Uploader();
