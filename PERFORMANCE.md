@@ -82,9 +82,9 @@ CUDA: 8.0
 **Accuracy**  
 
 
-11.03.2018, Tobias
-**Training data:** Frankfurt-Kaiserstrasse-All (proper Milica markings, 10.03.2018)
-**Evaluation data:** Rtk2018-Bahnstrasse-Markings (proper Milica markings, 10.03.2018)
+11.03.2018, Tobias  
+**Training data:** Frankfurt-Kaiserstrasse-All (proper Milica markings, 10.03.2018)  
+**Evaluation data:** Rtk2018-Bahnstrasse-Markings (proper Milica markings, 10.03.2018)  
 
 **Minimum conficence setting:** 50%
 
